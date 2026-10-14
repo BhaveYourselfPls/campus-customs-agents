@@ -384,3 +384,53 @@ Cash tab's $25,000 -> $25,000 reconciliation.
   database and open in the customer's inbox.
 
 ---
+
+## Problem 11 - Public GitHub Repo
+
+> Problem 11
+> Push the code to a public github repo.
+> Put a link to the repo in output/github_url.txt
+> Ensure the .env is not included.
+> Confirm all the expected files from the picture are included.
+> The README should explain copying the original .db to the working copy when a clean run is
+> needed, starting the MCP server, start FastAPI and React dashboard, and resetting the .db.
+
+**Outcome:** Pushed to https://github.com/BhaveYourselfPls/campus-customs-agents (public, `main`,
+167 files). Link written to `output/github_url.txt`. Wrote root `README.md`, `.gitignore`,
+`.env.example` and a consolidated `requirements.txt`. Verified all 25 expected files from the
+picture are present on the remote, plus 102 product images and 21 frontend files.
+
+**Two renames to match the picture exactly:**
+
+1. `data/campus_custums_new.db` -> `data/campus_customs_new.db`. The original spelling was a typo
+   in the Problem 2 prompt that I had preserved verbatim; the picture uses the correct spelling.
+   Updated every reference across code, configs, docs and output artifacts.
+2. `mcp_server/mcp_server.py` -> `mcp_server/server.py`, including `.mcp.json` and the
+   `import mcp_server` in `backend/shop_data.py`.
+
+`AI_prompts.md` was deliberately left with the old names - it is a historical log of what was
+actually asked and done, and rewriting it would falsify the record.
+
+**Two fixes made for the repo to be genuinely usable by someone else:**
+
+1. **`.mcp.json` contained machine-specific absolute paths** pointing at my own venv and OneDrive
+   folder - useless in a clone. Rewritten to a portable `"python"` + `mcp_server/server.py`, with
+   `backend/config.py` and `mcp_server/smoke_test.py` resolving both against the running
+   interpreter and the actual checkout at launch.
+2. **`requirements.txt` floors were dangerously loose.** `pydantic-ai-slim>=1.0.0` would install
+   1.x, which exposes `MCPServerStdio` rather than the `MCPToolset`/`StdioTransport` API this code
+   uses - a clone would have failed at import. Pinned to the versions actually verified
+   (pydantic-ai 2.55, fastmcp 4.1), with a comment explaining why the floors are not cosmetic.
+
+**Security verified three ways:** `.env` is gitignored and absent from the staged set; a grep for
+the live key prefix across all tracked files returns nothing; and the remote 404s on `/contents/.env`.
+`.venv/`, `node_modules/` and `.claude/` are all excluded.
+
+**Verified by cloning fresh into a temp directory:** both databases open with 102 catalogue rows,
+and `smoke_test.py` drove all 7 MCP tools successfully from the clone with no edits.
+
+**Note:** `data/campus_customs_new.db` ships in its post-run state (8 tables, 3 recorded
+resolutions), matching `output/resolved_tickets.json`. The README explains copying the baseline
+over it for a clean run.
+
+---
