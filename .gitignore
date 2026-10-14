@@ -1,0 +1,25 @@
+# Secrets — never commit. Use .env.example as the template.
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Node
+node_modules/
+frontend/dist/
+*.log
+
+# Local tooling
+.claude/
+.uv-cache/
+
+# Scratch
+*.tmp
+output/audit_trail.tmp
+output/*.corrupt-*.json

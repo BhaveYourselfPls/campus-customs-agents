@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Campus Customs — Ticket Desk</title>
+<style>
+  :root{
+    --black:#0a0a0a; --ink:#1a1a1a; --muted:#5f6b7a; --line:#e3e8ef;
+    --bg:#ffffff; --panel:#f7f9fc; --blue:#1457d1; --blue-dk:#0b3a8f;
+    --blue-soft:#eaf1fd; --white:#fff;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  }
+  header{
+    background:var(--black); color:var(--white);
+    padding:26px 34px 22px; border-bottom:4px solid var(--blue);
+  }
+  header h1{margin:0; font-size:22px; letter-spacing:-.01em; font-weight:650}
+  header p{margin:6px 0 0; color:#a8b4c4; font-size:13.5px}
+  .wrap{max-width:1020px; margin:0 auto; padding:0 34px 72px}
+
+  nav{
+    display:flex; gap:2px; flex-wrap:wrap;
+    border-bottom:2px solid var(--line); margin:0 0 30px; padding-top:26px;
+  }
+  nav button{
+    font:inherit; font-size:13.5px; font-weight:600; cursor:pointer;
+    background:none; border:none; color:var(--muted);
+    padding:11px 17px; border-bottom:3px solid transparent; margin-bottom:-2px;
+    transition:color .12s, border-color .12s;
+  }
+  nav button:hover{color:var(--blue)}
+  nav button[aria-selected="true"]{color:var(--blue); border-bottom-color:var(--blue)}
+
+  .panel{display:none} .panel.active{display:block}
+
+  h2{font-size:19px; margin:0 0 4px; letter-spacing:-.01em}
+  .ask{
+    background:var(--blue-soft); border-left:3px solid var(--blue);
+    padding:13px 17px; margin:18px 0 26px; font-style:italic; color:var(--blue-dk);
+  }
+  .ask span{display:block; font-style:normal; font-size:11.5px; font-weight:700;
+    letter-spacing:.07em; text-transform:uppercase; color:var(--muted); margin-bottom:5px}
+
+  .meta{display:flex; gap:9px; flex-wrap:wrap; margin:10px 0 0}
+  .tag{
+    font-size:11.5px; font-weight:650; letter-spacing:.03em;
+    padding:4px 10px; border-radius:2px; background:var(--panel);
+    color:var(--muted); border:1px solid var(--line);
+  }
+  .tag.blue{background:var(--blue); color:var(--white); border-color:var(--blue)}
+  .tag.dark{background:var(--black); color:var(--white); border-color:var(--black)}
+
+  section.block{margin:0 0 30px}
+  h3{
+    font-size:12px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--blue); margin:30px 0 12px; padding-bottom:7px;
+    border-bottom:1px solid var(--line); font-weight:700;
+  }
+  h4{font-size:14.5px; margin:20px 0 7px; font-weight:650}
+
+  table{width:100%; border-collapse:collapse; margin:12px 0 4px; font-size:13.5px}
+  th,td{text-align:left; padding:9px 11px; border-bottom:1px solid var(--line); vertical-align:top}
+  th{
+    font-size:11px; letter-spacing:.07em; text-transform:uppercase;
+    color:var(--muted); background:var(--panel); font-weight:700;
+  }
+  td code,p code,li code{
+    background:var(--panel); border:1px solid var(--line); border-radius:2px;
+    padding:1px 5px; font-size:12.5px; font-family:"SF Mono",Consolas,monospace; color:var(--blue-dk);
+  }
+  .step{
+    display:inline-block; width:21px; height:21px; line-height:21px; text-align:center;
+    background:var(--blue); color:var(--white); border-radius:50%;
+    font-size:11.5px; font-weight:700; margin-right:9px; flex:none;
+  }
+  ol.flow{list-style:none; padding:0; margin:12px 0}
+  ol.flow li{display:flex; align-items:flex-start; margin:0 0 11px}
+  ol.flow li div{flex:1}
+
+  .placeholder{
+    border:1.5px dashed var(--line); border-radius:3px; background:var(--panel);
+    padding:30px; text-align:center; color:var(--muted); font-size:13.5px;
+  }
+  .placeholder strong{display:block; color:var(--ink); font-size:15px; margin-bottom:5px}
+
+  .note{
+    background:var(--panel); border-left:3px solid var(--muted);
+    padding:13px 17px; margin:22px 0; font-size:13px; color:var(--muted);
+  }
+  .note strong{color:var(--ink)}
+  footer{color:var(--muted); font-size:12.5px; border-top:1px solid var(--line);
+    padding-top:18px; margin-top:44px}
+  .runline{font-size:12.5px; color:var(--muted); margin:10px 0 4px}
+  td.num{text-align:right; font-family:"SF Mono",Consolas,monospace; white-space:nowrap}
+  tr.total td{border-top:2px solid var(--black); border-bottom:none; background:var(--panel)}
+  .sub{color:var(--muted); font-size:12.5px; display:block; margin-top:3px; line-height:1.5}
+  .grade{display:inline-block; background:var(--blue); color:#fff; font-size:13px; font-weight:700;
+    padding:2px 10px; border-radius:4px; margin-left:4px; letter-spacing:.02em}
+  td.good{color:#116b33; font-weight:650}
+  td.bad{color:#a01515; font-weight:650}
+  #reflection ul{margin:10px 0 16px; padding-left:20px}
+  #reflection li{margin-bottom:9px}
+  #reflection h4{margin-top:26px; font-size:15.5px}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Campus Customs — Ticket Desk</h1>
+  <p>Multi-agent shop team · Boss · Inventory · Accounting · Facilities · Customer Service</p>
+</header>
+
+<div class="wrap">
+
+<nav role="tablist">
+  <button role="tab" aria-selected="true"  data-t="t1">Ticket 1 — Gym Shorts</button>
+  <button role="tab" aria-selected="false" data-t="t2">Ticket 2 — Handsome Dan</button>
+  <button role="tab" aria-selected="false" data-t="t3">Ticket 3 — Emerald Hoodie</button>
+  <button role="tab" aria-selected="false" data-t="cash">Cash</button>
+  <button role="tab" aria-selected="false" data-t="reflection">Reflection</button>
+</nav>
+
+<!-- ───────────────────────── TICKET 1 ───────────────────────── -->
+<div class="panel active" id="t1">
+  <h2>Ticket 1 — Gym Shorts</h2>
+  <div class="meta">
+    <span class="tag dark">true_assortment_gap</span>
+    <span class="tag">Tauhid Zaman · users.id 3</span>
+    <span class="tag blue">Hardest ticket</span>
+  </div>
+
+  <div class="ask"><span>Customer asked</span>"im looking for gym shorts"</div>
+
+  <p>The shop carries <strong>only tops</strong>. All 22 <code>garment_type</code> values are
+  shirts, hoodies, crewnecks and jackets — there are no shorts of any kind. No synonym fixes this,
+  because there is nothing to find.</p>
+
+  <h3>Expected</h3>
+
+  <h4>1 · Who the Boss calls first, and why</h4>
+  <p><strong>Inventory.</strong> The Boss's prompt routes <code>true_assortment_gap</code> to
+  Inventory before anyone else, and that ordering matters: the first question is
+  <em>"do we carry this at all?"</em> Asking Accounting first would mean pricing a product line
+  before confirming it is genuinely absent. Inventory establishes the gap is real; only then is
+  there anything for Accounting to cost.</p>
+  <p>Before any delegation, the Boss should call <code>find_unmet_demand</code> itself. Its prompt
+  requires the ticket list to come from the tool, never from memory.</p>
+
+  <h4>2 · Expected delegations (outside the Boss)</h4>
+  <table>
+    <tr><th>#</th><th>Agent</th><th>Question</th><th>Expected answer</th></tr>
+    <tr><td>1</td><td><strong>Inventory</strong></td>
+      <td>Do we carry gym shorts or anything close?</td>
+      <td>No. Confirms a true assortment gap, escalates — adding a line is above its authority.</td></tr>
+    <tr><td>2</td><td><strong>Accounting</strong></td>
+      <td>Would stocking shorts pay?</td>
+      <td>Cannot say. No sales or order table exists, so no margin or payback is computable. Should
+      give the comparable price band and refuse the forecast.</td></tr>
+  </table>
+  <p>Customer Service is <em>optional</em> here — useful for an honest "we don't carry that" reply,
+  but not required for the buying decision. Facilities should <strong>not</strong> be called:
+  nothing about this ticket touches assets or data integrity.</p>
+
+  <h4>3 · Tools they will likely use</h4>
+  <table>
+    <tr><th>Agent</th><th>Tool</th><th>Why</th></tr>
+    <tr><td>Boss</td><td><code>find_unmet_demand</code></td><td>Establish the ticket and its classification</td></tr>
+    <tr><td>Inventory</td><td><code>search_products</code></td><td>Confirm zero matches; read <code>unmatched_terms</code></td></tr>
+    <tr><td>Inventory</td><td><code>inventory_health</code></td><td>Show the shelf is healthy — this is a gap, not a stockout</td></tr>
+    <tr><td>Accounting</td><td><code>revenue_exposure</code></td><td>Comparable price band for sizing the bet</td></tr>
+    <tr><td>Boss</td><td><code>record_ticket_resolution</code></td><td>Write the decision to the permanent record</td></tr>
+  </table>
+
+  <h4>Expected outcome</h4>
+  <ol class="flow">
+    <li><span class="step">1</span><div>Both specialists set <code>needs_human: true</code> — new product lines are spend.</div></li>
+    <li><span class="step">2</span><div>Boss decides <strong>not</strong> to order, and escalates with the demand evidence.</div></li>
+    <li><span class="step">3</span><div><code>needs_human_approval: true</code>. Owner: Inventory.</div></li>
+  </ol>
+  <p><strong>The failure mode to watch:</strong> an agent inventing a plausible near-match — offering
+  sweatpants or "athletic bottoms" that do not exist — rather than saying the shop carries none.</p>
+
+  <h3>Actual</h3>
+
+  <p class="runline"><code>run-20261013T195012Z-c02be0</code> · 14 audit steps · database reset to baseline immediately before the run</p>
+
+  <h4>Who worked</h4>
+  <table>
+    <tr><th>Agent</th><th>Role</th><th>Confidence</th><th>Outcome</th></tr>
+    <tr><td><strong>Boss</strong></td><td>Decided</td><td>—</td><td>Declined to order. Escalated for human approval.</td></tr>
+    <tr><td><strong>Inventory</strong></td><td>Advised, 1st</td><td>high</td><td>Confirmed a true assortment gap, not a stockout. Escalated.</td></tr>
+    <tr><td><strong>Accounting</strong></td><td>Advised, 2nd</td><td>high</td><td>No comparable price band, no sales history. Refused to price it. Escalated.</td></tr>
+    <tr><td>Facilities</td><td colspan="3">Not consulted — correct, nothing here touches assets.</td></tr>
+    <tr><td>Customer Service</td><td colspan="3">Not consulted.</td></tr>
+  </table>
+
+  <h4>What was delegated</h4>
+  <ol class="flow">
+    <li><span class="step">1</span><div><strong>Boss → Inventory.</strong> Do we carry gym shorts? Inventory: zero matching products, one recorded request. "Evidence supports evaluating the category, but does not establish enough demand for Inventory to decide that Campus Customs should buy it."</div></li>
+    <li><span class="step">2</span><div><strong>Boss → Accounting.</strong> Would stocking shorts pay? Accounting: no gym-shorts matches means <em>no comparable price band</em>, and the database holds no sales or order history. Refused to produce economics.</div></li>
+  </ol>
+
+  <h4>Tools actually called</h4>
+  <table>
+    <tr><th>Agent</th><th>Tools</th></tr>
+    <tr><td>Inventory</td><td><code>find_unmet_demand</code> · <code>search_products</code></td></tr>
+    <tr><td>Accounting</td><td><code>revenue_exposure</code> · <code>search_products</code> · <code>inventory_health</code></td></tr>
+    <tr><td>Boss</td><td><code>record_ticket_resolution</code> (resolution #1 — see audit note below)</td></tr>
+  </table>
+
+  <h4>Decision</h4>
+  <div class="ask"><span>Boss ruled</span>"Do not add or order gym shorts yet. Hold the request while obtaining supplier unit cost and additional demand evidence; a limited pilot can be reconsidered after human review."</div>
+  <p>Owner: Boss · <strong>needs_human_approval: true</strong> · cash impact <strong>$0.00</strong></p>
+
+  <h4>Expected vs actual</h4>
+  <p><strong>Matched.</strong> Inventory was called first, Accounting second, both escalated, and no money moved — exactly the predicted sequence. Accounting's refusal to forecast is the behaviour its prompt demands, and it held under pressure to produce a number.</p>
+  <p>The predicted failure mode — inventing a plausible near-match like sweatpants — <strong>did not occur</strong>. Inventory reported zero matches rather than improvising a substitute.</p>
+  <p>One difference from the prediction: Customer Service was <em>not</em> consulted, so no honest "we don't carry that" reply was drafted for Tauhid. The prediction called this optional, and the Boss treated it as such — defensible, but it means the customer still has no answer.</p>
+</div>
+
+<!-- ───────────────────────── TICKET 2 ───────────────────────── -->
+<div class="panel" id="t2">
+  <h2>Ticket 2 — Handsome Dan</h2>
+  <div class="meta">
+    <span class="tag dark">fixable_by_search</span>
+    <span class="tag">Tauhid Zaman · users.id 3</span>
+    <span class="tag blue">Asked twice</span>
+  </div>
+
+  <div class="ask"><span>Customer asked</span>"how about something with handsome dan on it" — then again,
+  "well any item iwth handsome dan"</div>
+
+  <p>The mascot <strong>is</strong> in the catalogue — indexed as "bulldog", never as "Handsome Dan".
+  Proof sits in the chat log: the customer's very next message, "anything with the word bulldog on
+  it?", returned several products. Nothing needs buying. The vocabulary failed, not the shelf.</p>
+
+  <h3>Expected</h3>
+
+  <h4>1 · Who the Boss calls first, and why</h4>
+  <p><strong>Customer Service.</strong> The Boss's prompt routes <code>fixable_by_search</code>
+  straight to Customer Service and explicitly says <em>not</em> to route it to Inventory. The stock
+  exists, so there is no buying decision to make — the only open question is what we say to Tauhid.
+  Calling Inventory here would waste a delegation and risk framing a search bug as a purchasing
+  problem.</p>
+
+  <h4>2 · Expected delegations (outside the Boss)</h4>
+  <table>
+    <tr><th>#</th><th>Agent</th><th>Question</th><th>Expected answer</th></tr>
+    <tr><td>1</td><td><strong>Customer Service</strong></td>
+      <td>What do we tell Tauhid, and what do we actually have?</td>
+      <td>Returns bulldog-indexed products with verified in-stock sizes, plus a drafted reply and a
+      recommendation to add "Handsome Dan" as a search synonym.</td></tr>
+  </table>
+  <p>This should be a <strong>single-delegation ticket</strong>. Inventory, Accounting and Facilities
+  are all unnecessary. A run that consults more than one specialist here is over-delegating.</p>
+
+  <h4>3 · Tools they will likely use</h4>
+  <table>
+    <tr><th>Agent</th><th>Tool</th><th>Why</th></tr>
+    <tr><td>Boss</td><td><code>find_unmet_demand</code></td><td>Confirm classification; collapse both asks into one ticket</td></tr>
+    <tr><td>Customer Service</td><td><code>search_products</code></td><td>Synonym expansion maps "handsome dan" → "bulldog"</td></tr>
+    <tr><td>Customer Service</td><td><code>check_stock</code></td><td><strong>Required.</strong> No product may be named without <code>can_promise</code></td></tr>
+    <tr><td>Boss</td><td><code>record_ticket_resolution</code></td><td>Record the synonym fix</td></tr>
+  </table>
+  <p>Expect <code>check_stock</code> to be called <strong>several times</strong> — once per product
+  Customer Service intends to name. That repetition is the control working, not waste.</p>
+
+  <h4>Expected outcome</h4>
+  <ol class="flow">
+    <li><span class="step">1</span><div>Customer Service returns verified bulldog products with real sizes and prices.</div></li>
+    <li><span class="step">2</span><div>Boss decides: reply to Tauhid, add the synonym. <strong>No spend.</strong></div></li>
+    <li><span class="step">3</span><div>Owner: Customer Service. Human review of the draft is reasonable; approval for spend is not needed.</div></li>
+  </ol>
+  <p><strong>The failure mode to watch:</strong> naming a product from <code>search_products</code>
+  without passing it through <code>check_stock</code> — promising a sold-out size.</p>
+
+  <h3>Actual</h3>
+
+  <p class="runline"><code>run-20261013T195051Z-ebc4b9</code> · 12 audit steps</p>
+
+  <h4>Who worked</h4>
+  <table>
+    <tr><th>Agent</th><th>Role</th><th>Confidence</th><th>Outcome</th></tr>
+    <tr><td><strong>Boss</strong></td><td>Decided</td><td>—</td><td>Correct the failed reply, offer verified bulldog items. No spend.</td></tr>
+    <tr><td><strong>Customer Service</strong></td><td>Advised, only delegate</td><td>high</td><td>Found five in-stock mascot products; verified every one before naming it.</td></tr>
+    <tr><td>Inventory / Accounting / Facilities</td><td colspan="3">Not consulted — correct. No buying decision exists here.</td></tr>
+  </table>
+
+  <h4>What was delegated</h4>
+  <ol class="flow">
+    <li><span class="step">1</span><div><strong>Boss → Customer Service.</strong> Single delegation, as predicted. Returned a drafted reply naming the District Vit Crewneck Vintage Bulldog ($58, XS/M/L/XL/XXL) and the Vintage Standing Bulldog crewneck ($58, XS/M/L/XL), plus Vintage Bulldog hoodies.</div></li>
+  </ol>
+
+  <h4>Tools actually called</h4>
+  <table>
+    <tr><th>Agent</th><th>Tools</th></tr>
+    <tr><td>Customer Service</td><td><code>find_unmet_demand</code> · <code>search_products</code> · <code>check_stock</code> <strong>×5</strong></td></tr>
+    <tr><td>Boss</td><td><code>record_ticket_resolution</code> (resolution #2)</td></tr>
+  </table>
+  <p><code>check_stock</code> ran once per product before any was named — <strong>the stock gate working exactly as designed</strong>, and the single most important behaviour on this ticket.</p>
+
+  <h4>Decision</h4>
+  <div class="ask"><span>Boss ruled</span>"CustomerService will correct the earlier failed search response and offer Tauhid the confirmed-available Handsome Dan/bulldog items, asking him to select an item and size before proceeding. The items must not be described as gym shorts."</div>
+  <p>Owner: Customer Service · needs_human_approval: false · cash impact <strong>$0.00</strong></p>
+
+  <h4>Expected vs actual</h4>
+  <p><strong>Matched precisely.</strong> Single delegation to Customer Service, repeated <code>check_stock</code> calls, synonym expansion carrying the search, zero spend.</p>
+  <p>The predicted failure mode — naming a product without passing it through <code>check_stock</code> — <strong>did not occur</strong>; five stock checks for five products.</p>
+  <p>Unprompted bonus: the Boss explicitly instructed that the items "must not be described as gym shorts", guarding against contamination from the T1 context. That was not predicted.</p>
+</div>
+
+<!-- ───────────────────────── TICKET 3 ───────────────────────── -->
+<div class="panel" id="t3">
+  <h2>Ticket 3 — Emerald Green Hoodie</h2>
+  <div class="meta">
+    <span class="tag dark">fixable_by_search</span>
+    <span class="tag">Test User · users.id 1</span>
+    <span class="tag blue">Partial match</span>
+  </div>
+
+  <div class="ask"><span>Customer asked</span>"Do you have a bright emerald green hoodie?"</div>
+
+  <p>Two halves that resolve differently. <strong>Hoodies: yes</strong>, many, in stock.
+  <strong>Emerald green: no.</strong> <code>catalogue.colors</code> is a free-text JSON array and
+  "emerald" appears nowhere in it. This is the subtlest ticket, because a careless agent answers
+  "yes" to the garment and silently ignores the colour.</p>
+
+  <h3>Expected</h3>
+
+  <h4>1 · Who the Boss calls first, and why</h4>
+  <p><strong>Customer Service</strong> — same routing as Ticket 2, same reason: classified
+  <code>fixable_by_search</code>, so it is a communication problem, not a buying one.</p>
+  <p>But the expected <em>answer</em> differs from Ticket 2 in a way that matters. In Ticket 2 the
+  synonym genuinely finds what the customer asked for. Here the synonym finds hoodies while the
+  requested colour still does not exist. Customer Service must say both things: we have hoodies,
+  we do not have emerald.</p>
+
+  <h4>2 · Expected delegations (outside the Boss)</h4>
+  <table>
+    <tr><th>#</th><th>Agent</th><th>Question</th><th>Expected answer</th></tr>
+    <tr><td>1</td><td><strong>Customer Service</strong></td>
+      <td>What do we tell this customer about an emerald green hoodie?</td>
+      <td>In-stock hoodies with their <em>actual</em> colours stated, an explicit note that emerald
+      is unavailable, and no promised restock date.</td></tr>
+  </table>
+  <p>Optional second call to <strong>Inventory</strong> if the Boss wants to know whether any green
+  item exists at all. Defensible, but not required — <code>search_products</code> already answers it.</p>
+
+  <h4>3 · Tools they will likely use</h4>
+  <table>
+    <tr><th>Agent</th><th>Tool</th><th>Why</th></tr>
+    <tr><td>Boss</td><td><code>find_unmet_demand</code></td><td>Confirm the ticket and its classification</td></tr>
+    <tr><td>Customer Service</td><td><code>search_products</code></td><td>With <code>in_stock_only=True</code>; read <code>unmatched_terms</code> for "emerald"</td></tr>
+    <tr><td>Customer Service</td><td><code>check_stock</code></td><td>Verify each hoodie before naming it</td></tr>
+    <tr><td>Boss</td><td><code>record_ticket_resolution</code></td><td>Record the colour-vocabulary fix</td></tr>
+  </table>
+  <p>The signal to watch is <code>unmatched_terms</code> containing <code>"emerald"</code> while the
+  search still returns hoodies. That single field is what separates "we have it" from "we have
+  something like it".</p>
+
+  <h4>Expected outcome</h4>
+  <ol class="flow">
+    <li><span class="step">1</span><div>Customer Service offers real hoodies with their real colours — navy, heather gray, white.</div></li>
+    <li><span class="step">2</span><div>Reply states plainly that emerald green is not available.</div></li>
+    <li><span class="step">3</span><div>Boss records a colour-synonym improvement. <strong>No spend.</strong> Owner: Customer Service.</div></li>
+  </ol>
+  <p><strong>The failure mode to watch:</strong> answering "yes, here are our hoodies" and dropping
+  the colour entirely — technically true, functionally a lie to the customer.</p>
+
+  <h3>Actual</h3>
+
+  <p class="runline"><code>run-20261013T195059Z-aaf53f</code> · 10 audit steps</p>
+
+  <h4>Who worked</h4>
+  <table>
+    <tr><th>Agent</th><th>Role</th><th>Confidence</th><th>Outcome</th></tr>
+    <tr><td><strong>Boss</strong></td><td>Decided</td><td>—</td><td>State plainly that emerald is unavailable; offer verified alternatives.</td></tr>
+    <tr><td><strong>Customer Service</strong></td><td>Advised, only delegate</td><td>high</td><td>Confirmed "emerald" unmatched; available hoodie colours are gray, navy, white.</td></tr>
+    <tr><td>Inventory / Accounting / Facilities</td><td colspan="3">Not consulted — correct.</td></tr>
+  </table>
+
+  <h4>What was delegated</h4>
+  <ol class="flow">
+    <li><span class="step">1</span><div><strong>Boss → Customer Service.</strong> Single delegation. Returned three verified hoodies: Yale Sports Hoodie Tennis ($45, XS–XXL), Basic Hoodie Big Yale ($68, XS–XXL), Champion Reverse Weave Hoodie 1 ($68, S/M/L/XXL).</div></li>
+  </ol>
+
+  <h4>Tools actually called</h4>
+  <table>
+    <tr><th>Agent</th><th>Tools</th></tr>
+    <tr><td>Customer Service</td><td><code>find_unmet_demand</code> · <code>search_products</code> · <code>check_stock</code> <strong>×3</strong></td></tr>
+    <tr><td>Boss</td><td><code>record_ticket_resolution</code> (resolution #3)</td></tr>
+  </table>
+
+  <h4>Decision</h4>
+  <div class="ask"><span>Boss ruled</span>"Customer Service will tell Test User that no bright emerald-green hoodie is available, then offer the verified closest alternatives: Yale Sports Hoodie Tennis ($45, XS–XXL), Basic Hoodie Big Yale ($68, XS–XXL), or Champion Reverse Weave Hoodie 1 ($68, S/M/L/XXL)."</div>
+  <p>Owner: Customer Service · needs_human_approval: false · cash impact <strong>$0.00</strong></p>
+
+  <h4>Expected vs actual</h4>
+  <p><strong>Matched, including the hard part.</strong> This was the ticket most likely to produce a technically-true-but-misleading answer, and it did not. Customer Service reported that <code>"emerald"</code> remained unmatched <em>and</em> that the available colours are gray, navy and white — it answered both halves of the question instead of quietly dropping the colour.</p>
+  <p>The predicted failure mode — "yes, here are our hoodies" with the colour silently ignored — <strong>did not occur</strong>.</p>
+  <p>Difference from the prediction: the Boss did not record a colour-synonym improvement as a follow-up action. The reply is correct, but the underlying vocabulary gap that caused the ticket is still unfixed, so the next customer asking for emerald will fail the same way.</p>
+</div>
+
+<!-- ───────────────────────── CASH ───────────────────────── -->
+<div class="panel" id="cash">
+  <h2>Cash</h2>
+  <p>Checking account movements across the three resolved tickets. Figures are read from
+  <code>cash_accounts</code> and <code>cash_transactions</code> in
+  <code>data/campus_customs_new.db</code>, after a reset to baseline immediately before the runs.</p>
+
+  <h3>Ledger</h3>
+  <table>
+    <tr><th>#</th><th>Line</th><th>Change</th><th>Balance</th></tr>
+    <tr>
+      <td>—</td>
+      <td><strong>Opening balance</strong><br><span class="sub">Seeded at reset</span></td>
+      <td class="num">—</td>
+      <td class="num"><strong>$25,000.00</strong></td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td><strong>T1 — Gym Shorts</strong><br><span class="sub">Boss declined to order. Inventory found one request and no stock; Accounting found no unit cost and no sales history, so the economics could not be established. Flagged <code>needs_human_approval</code>; no human released funds, because the team's own recommendation was not to buy.</span></td>
+      <td class="num">$0.00</td>
+      <td class="num">$25,000.00</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td><strong>T2 — Handsome Dan</strong><br><span class="sub">Resolved by correcting the search vocabulary. The stock already existed and was verified with five <code>check_stock</code> calls. Nothing to buy.</span></td>
+      <td class="num">$0.00</td>
+      <td class="num">$25,000.00</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td><strong>T3 — Emerald Hoodie</strong><br><span class="sub">Resolved by offering three verified in-stock hoodies and stating plainly that emerald is unavailable. No new stock was ordered.</span></td>
+      <td class="num">$0.00</td>
+      <td class="num">$25,000.00</td>
+    </tr>
+    <tr class="total">
+      <td>—</td>
+      <td><strong>Closing balance</strong></td>
+      <td class="num"><strong>$0.00</strong></td>
+      <td class="num"><strong>$25,000.00</strong></td>
+    </tr>
+  </table>
+
+  <h3>Reconciliation</h3>
+  <table>
+    <tr><th>Check</th><th>Value</th></tr>
+    <tr><td>Opening balance</td><td class="num">$25,000.00</td></tr>
+    <tr><td>Total debits (3 tickets)</td><td class="num">$0.00</td></tr>
+    <tr><td>Computed closing (25,000.00 − 0.00)</td><td class="num">$25,000.00</td></tr>
+    <tr><td><code>cash_accounts.balance</code> (live read)</td><td class="num">$25,000.00</td></tr>
+    <tr><td>Rows in <code>cash_transactions</code></td><td class="num">0</td></tr>
+    <tr class="total"><td><strong>Reconciled</strong></td><td class="num"><strong>✓ Yes — difference $0.00</strong></td></tr>
+  </table>
+
+  <div class="note">
+    <strong>Why nothing moved.</strong> The only ticket that could have cost money was T1, and the
+    team recommended <em>against</em> spending on it: one customer request is not demand evidence, and
+    with no unit cost and no sales history in the database, Accounting could not size the bet. The
+    Boss flagged it for human approval rather than ordering, and no human released funds.
+    <br><br>
+    A zero is the correct answer here, not a missing one. The approval path itself is exercised and
+    verified separately — an $1,800 debit was approved, recorded and reconciled during API testing,
+    along with four refusals: an agent-named approver, an overdraw, a non-existent resolution, and a
+    missing memo. That test data was cleared by the reset that preceded these runs, which is why the
+    ledger above starts clean.
+  </div>
+
+  <div class="note">
+    <strong>Token spend</strong> is not included. The audit trail records per-report token counts,
+    but no price card for <code>gpt-5.6-luna</code> is configured in this project, so any dollar
+    figure would be invented. The counts are in <code>output/audit_trail.json</code> under
+    <code>tokens</code> if a rate is supplied later.
+  </div>
+</div>
+
+<!-- ───────────────────────── REFLECTION ───────────────────────── -->
+<div class="panel" id="reflection">
+  <h2>Reflection</h2>
+  <p>Assessed against the run of record: database reset to the <code>campus_customs.db</code>
+  baseline, then all three tickets run on <code>gpt-5.6-luna</code>. 36 audit steps, 17 MCP tool
+  calls, $0.00 moved. Evidence is drawn from the Actual sections of the three ticket tabs, the Cash
+  tab, <code>output/audit_trail.json</code> and <code>output/resolved_tickets.json</code>.</p>
+
+  <h3>1 · How the agents performed, ticket by ticket</h3>
+
+  <h4>T1 — Gym Shorts · <span class="grade">A−</span></h4>
+  <table>
+    <tr><th>Measure</th><th>Result</th></tr>
+    <tr><td>Wall time / tokens</td><td class="num">38.5 s · 11,941 tokens</td></tr>
+    <tr><td>Delegations</td><td>2 (Inventory → Accounting)</td></tr>
+    <tr><td>Tool calls</td><td>5 · <code>find_unmet_demand</code>, <code>search_products</code> ×2, <code>revenue_exposure</code>, <code>inventory_health</code></td></tr>
+    <tr><td>Findings with cited evidence</td><td class="num">7 of 7</td></tr>
+  </table>
+  <p><strong>What earns the grade.</strong> This was the only ticket that could have spent money, and
+  the team refused to. Inventory did not merely say "no shorts" — it separated the two things that
+  look identical in this database and lead to opposite decisions: <em>"search_products(query='gym
+  shorts', in_stock_only=true): match_count 0; unmatched_terms ['gym','shorts']"</em> establishes an
+  assortment gap, not a stockout, and the shop's 145 sold-out rows prove stockouts are the normal
+  case here. It then volunteered the number that undercuts its own escalation:
+  <em>"T1-gym-shorts times_asked: 1"</em>. One request is not demand, and Inventory said so rather
+  than letting an escalation imply momentum that does not exist.</p>
+  <p>Accounting's performance is the single best agent behaviour in the whole run. Asked whether
+  stocking shorts would pay, it returned: <em>"The available data cannot calculate revenue, margin,
+  profit, payback, or whether gym shorts will sell"</em>, citing that <code>revenue_exposure</code>
+  explicitly reports no sales or order table and no unit cost. A model asked for a business case will
+  almost always produce one; producing a plausible payback period from a database with zero sales
+  rows would have been the most dangerous single output this system could emit, because it would look
+  exactly like a real one. The Cash tab's $0.00 line for T1 is the direct consequence of that refusal.</p>
+  <p><strong>What costs it the full grade.</strong> Two things.</p>
+  <ul>
+    <li><strong>Accounting padded.</strong> Two of its four findings — <em>"retail value of stock on
+    hand is $344,168 across 5,920 units"</em> and <em>"145 sold-out product-size rows (23.7%) and 115
+    low-stock rows"</em> — are true, correctly cited, and <em>irrelevant to gym shorts</em>. Having
+    nothing to say about a product the shop does not carry, it reported shop-wide totals instead of
+    stating the void more briefly. It even flagged its own irrelevance (<em>"this does not establish
+    demand"</em>), which is honest but means roughly half its output did not bear on the question.</li>
+    <li><strong>Tauhid still has no answer.</strong> Customer Service was never consulted, so no reply
+    was drafted. The ticket is marked Resolved and the shop's response to the customer is silence.
+    The Expected plan called the Customer Service delegation optional and the Boss agreed — defensible
+    routing, poor customer outcome.</li>
+  </ul>
+  <p>It is also the most expensive run — 38.5 s and 11,941 tokens — to produce the word "no". That is
+  the correct answer and worth paying for once, but it is worth noticing that refusing to buy cost
+  more than answering two customers did.</p>
+
+  <h4>T2 — Handsome Dan · <span class="grade">A</span></h4>
+  <table>
+    <tr><th>Measure</th><th>Result</th></tr>
+    <tr><td>Wall time / tokens</td><td class="num">7.4 s · 13,954 tokens</td></tr>
+    <tr><td>Delegations</td><td>1 (Customer Service)</td></tr>
+    <tr><td>Tool calls</td><td>7 · <code>find_unmet_demand</code>, <code>search_products</code>, <code>check_stock</code> <strong>×5</strong></td></tr>
+    <tr><td>Products verified before being named</td><td class="num">5 of 5</td></tr>
+  </table>
+  <p><strong>What earns the grade.</strong> Five <code>check_stock</code> calls for five products.
+  Not one item reached the draft reply without <code>can_promise: true</code> behind it, and the
+  findings carry the per-size detail that makes the promise safe: <em>"District Vit Crewneck Vintage
+  Bulldog … sizes_in_stock=[XS,M,L,XL,XXL], sizes_sold_out=[S]"</em>. That S is the whole point. A
+  reply that said "available in all sizes" would have been wrong by exactly one size, which is how
+  shops lose customers — and the stock gate caught it without being asked to.</p>
+  <p>Customer Service also reported the limit of its own fix: <em>"terms_used=[bulldog, mascot, dan,
+  handsome], unmatched_terms=[dan, handsome]"</em>. The search succeeded through the
+  <code>bulldog</code> synonym while the literal words the customer typed still match nothing. That
+  distinction is what tells the Boss this is a vocabulary defect rather than a lucky hit.</p>
+  <p>The Boss then added an instruction nobody asked for and the Expected plan did not predict: the
+  items <em>"must not be described as gym shorts"</em>. It had just ruled on T1 in the same session
+  and explicitly fenced that context off. Cross-ticket contamination is a real multi-agent failure
+  mode and it guarded against it unprompted.</p>
+  <p><strong>Blemishes.</strong> The Boss's recorded rationale contains a garbled fragment —
+  <em>"five available bulldog/m mascot products"</em> — which is now permanently in
+  <code>ticket_resolutions</code> row #2, since that table is append-only by design. Harmless here,
+  but it is a reminder that a sloppy sentence written into the business record cannot be tidied up
+  later, only superseded. Separately, Customer Service returned <code>needs_human: false</code> on a
+  draft that its own prompt says a human must send; the stricter reading of its own rule would have
+  flagged it.</p>
+
+  <h4>T3 — Emerald Green Hoodie · <span class="grade">A−</span></h4>
+  <table>
+    <tr><th>Measure</th><th>Result</th></tr>
+    <tr><td>Wall time / tokens</td><td class="num">27.9 s · 11,774 tokens</td></tr>
+    <tr><td>Delegations</td><td>1 (Customer Service)</td></tr>
+    <tr><td>Tool calls</td><td>5 · <code>find_unmet_demand</code>, <code>search_products</code>, <code>check_stock</code> ×3</td></tr>
+    <tr><td>Both halves of the question answered</td><td>Yes — garment <em>and</em> colour</td></tr>
+  </table>
+  <p><strong>What earns the grade.</strong> This was the ticket designed to catch a confident liar.
+  "Do you have a bright emerald green hoodie?" has a yes half and a no half, and the cheapest
+  plausible answer — "yes, here are our hoodies" — is technically true and functionally dishonest.
+  Customer Service answered both halves: <em>"'emerald' was unmatched and the hoodie results had only
+  gray, navy and white"</em>. It then verified each alternative, including the awkward one:
+  <em>"Champion Reverse Weave Hoodie 1 … sizes_in_stock=['S','M','L','XXL'], sizes_sold_out=['XS','XL']"</em>.
+  Offering a hoodie while volunteering that two of its sizes are gone is the behaviour you want and
+  the one a sales-motivated system would skip.</p>
+  <p><strong>What costs it the full grade — and this is the most important finding on the board.</strong>
+  The ticket closed without fixing what caused it. The Expected section predicted the Boss would
+  record a colour-synonym improvement; it did not. <code>catalogue.colors</code> is still free-text
+  JSON with no "emerald", so the next customer typing <em>emerald</em>, <em>forest</em> or
+  <em>kelly</em> fails in precisely the same way. The ticket count went down and the defect did not.
+  Marking a conversation resolved is not the same as removing the cause, and this system currently
+  cannot tell those apart — the board shows three green <strong>Resolved</strong> badges, one of which
+  is really "customer answered, bug still live".</p>
+
+  <h4>Across all three</h4>
+  <table>
+    <tr><th>Criterion</th><th>Result</th><th>Evidence</th></tr>
+    <tr><td>Every claim tool-grounded</td><td class="good">Pass</td><td>15 of 15 findings cite a tool call and its output</td></tr>
+    <tr><td>No unverified promise</td><td class="good">Pass</td><td>8 <code>check_stock</code> calls before any product was named</td></tr>
+    <tr><td>No invented economics</td><td class="good">Pass</td><td>Accounting named the missing inputs instead of estimating</td></tr>
+    <tr><td>No unapproved spend</td><td class="good">Pass</td><td>Cash tab: $25,000.00 → $25,000.00, zero <code>cash_transactions</code> rows</td></tr>
+    <tr><td>Correct routing</td><td class="good">Pass</td><td>2 specialists on the buying question, 1 on each search defect</td></tr>
+    <tr><td>Root causes fixed</td><td class="bad">Fail</td><td>T3's colour gap left live; T1's customer left unanswered</td></tr>
+  </table>
+  <p>The honest summary: <strong>this team is excellent at not doing damage and mediocre at finishing
+  the job.</strong> Every control designed to stop a wrong promise or a wrong purchase held. Nothing
+  designed to actually improve the shop fired, because nothing in the toolset can change the shop.</p>
+
+  <h3>2 · Expected versus Actual</h3>
+
+  <table>
+    <tr><th>Ticket</th><th>Predicted</th><th>Actual</th><th>Verdict</th></tr>
+    <tr>
+      <td><strong>T1</strong></td>
+      <td>Boss → Inventory first (confirm the gap is real before pricing it), then Accounting; both escalate; no spend</td>
+      <td>Boss → Inventory → Accounting; both <code>needs_human: true</code>; $0.00</td>
+      <td class="good">Matched, including order</td>
+    </tr>
+    <tr>
+      <td><strong>T2</strong></td>
+      <td>Single delegation to Customer Service; repeated <code>check_stock</code>; no spend; Inventory not involved</td>
+      <td>Exactly that — 1 delegation, 5 stock checks, $0.00</td>
+      <td class="good">Matched precisely</td>
+    </tr>
+    <tr>
+      <td><strong>T3</strong></td>
+      <td>Single delegation to Customer Service; <code>unmatched_terms</code> contains "emerald" while hoodies still return; colour stated plainly</td>
+      <td>Exactly that — <code>unmatched_terms=["emerald"]</code>, three verified hoodies offered, colour gap stated</td>
+      <td class="good">Matched on the hard part</td>
+    </tr>
+  </table>
+
+  <p><strong>All three predicted failure modes were avoided.</strong> No invented near-match for gym
+  shorts (Inventory returned <code>match_count 0</code> rather than improvising sweatpants); no product
+  named without passing <code>check_stock</code>; no silently-dropped colour on T3.</p>
+
+  <p><strong>Where Actual diverged from Expected:</strong></p>
+  <ul>
+    <li><strong>T1 — the optional delegation stayed optional, and it mattered.</strong> The Expected
+    section listed Customer Service as "useful but not required". The Boss skipped it, which is
+    consistent with the plan but leaves Tauhid with no reply. The prediction was right about the
+    mechanics and wrong about the significance: that delegation was not optional from the customer's
+    point of view.</li>
+    <li><strong>T3 — the predicted follow-up never happened.</strong> Expected said the Boss would
+    "record a colour-synonym improvement". It recorded the customer reply only. This is the clearest
+    gap between plan and behaviour in the whole run.</li>
+    <li><strong>T2 — an unpredicted good behaviour.</strong> The "must not be described as gym shorts"
+    guard was not in the plan. The Expected sections were written to predict failures; this one
+    surfaced a strength instead.</li>
+    <li><strong>A prediction the plan could not have made.</strong> Every specialist called
+    <code>find_unmet_demand</code> itself — a tool the harness assigns to the Boss. The Expected
+    sections assumed the Boss would call it first, as its prompt instructs. In practice the Boss
+    delegated immediately and the specialists re-derived the ticket context themselves. Full
+    connectivity made this harmless (they got the same answer) but it is duplicated work: three
+    <code>find_unmet_demand</code> calls across three runs, none of them by the Boss.</li>
+  </ul>
+
+  <h3>3 · What would have been simpler as one agent with tools</h3>
+
+  <p><strong>T2 and T3 should have been one agent. Both of them, outright.</strong></p>
+  <p>The evidence is in their own tabs. Each resolved with <em>one</em> delegation to <em>one</em>
+  specialist, which means the five-agent structure contributed a single thing: a Boss that received a
+  question, forwarded it verbatim to Customer Service, received a report, and restated it as a
+  decision. Strip that out and the work is identical — call <code>find_unmet_demand</code>,
+  <code>search_products</code>, then <code>check_stock</code> per candidate.</p>
+  <p>The overhead is measurable. T2 spent 12 audit steps and 13,954 tokens to produce one specialist
+  report; T3 spent 10 steps and 11,774 tokens for one. The Boss's delegation hop costs a full extra
+  model round-trip — read the ticket, choose a specialist, write the question, then later read the
+  report and rewrite it as a decision — on a ticket where there was never more than one possible
+  specialist. T2 is the sharpest case: 13,954 tokens, the <em>highest</em> of the three runs, for the
+  <em>simplest</em> ticket, because the Boss and Customer Service each paid to load and reason over
+  the same ticket context.</p>
+  <p>And a single agent would have fixed the T3 bug. One agent holding search, stock and catalogue
+  tools would have seen <code>unmatched_terms=["emerald"]</code> and the absence of a colour synonym
+  in one context. Instead that observation was made by Customer Service, compressed into a report,
+  and read by a Boss who was deciding what to tell the customer — so the fix fell between the two
+  roles. <strong>Splitting the work split the insight.</strong></p>
+
+  <p><strong>Where the five-agent structure genuinely earned its keep: T1, and only T1.</strong></p>
+  <p>T1 is the one ticket where two specialists disagreed <em>in kind</em> rather than in detail.
+  Inventory answered a merchandising question ("we carry no shorts; one request is not demand");
+  Accounting answered an economics question ("there is no unit cost and no sales history, so the
+  bet cannot be sized"). Those are different refusals for different reasons, and a single agent asked
+  "should we stock gym shorts?" would likely have produced one blended answer that quietly leaned on
+  whichever framing came to hand. The separation also produced two independent
+  <code>needs_human</code> escalations, each with its own cited reason — which is precisely the record
+  a human needs before approving a purchase order. The Cash tab's $0.00 for T1 rests on two
+  independent refusals, not one.</p>
+  <p><strong>The design lesson for Campus Customs:</strong> multi-agent structure pays when a decision
+  has genuinely separable dimensions that could conflict — buying versus economics. It is pure
+  overhead when the ticket has exactly one owner. Two of this shop's three live tickets had exactly
+  one owner. A sensible production build would run a single Shop Agent for
+  <code>fixable_by_search</code> tickets and convene the full team only for
+  <code>true_assortment_gap</code> — a routing rule <code>find_unmet_demand</code> already computes
+  and hands over for free.</p>
+
+  <h3>4 · Three new problems this team <em>could</em> solve today</h3>
+
+  <h4>a. Reorder triage across the 145 sold-out rows</h4>
+  <p>Accounting already surfaced the raw fact on T1 without being asked: <em>"145 sold-out
+  product-size rows (23.7%) and 115 low-stock rows"</em>. Nobody has ever triaged them. The shop is
+  sitting on $344,168 of stock at retail and 8,044 of sold-out exposure with no ranked list of what
+  to reorder first.</p>
+  <p>This needs no new tools. <code>inventory_health</code> returns the sold-out and low-stock rows;
+  <code>revenue_exposure</code> returns per-product retail value. Inventory ranks what is empty,
+  Accounting values it, the Boss decides and flags the spend, and a human approves through
+  <code>POST /approvals/{id}/pay</code> — a path already proven to work and to refuse the four wrong
+  cases. This is the same shape as T1 but with the crucial difference that T1 lacked: these are
+  products the shop <em>already sells</em>, so "will it sell?" is not the blocking question. It is
+  the highest-value work available to this team unchanged.</p>
+
+  <h4>b. The unmatched-terms backlog — the bug T3 left behind</h4>
+  <p><code>find_unmet_demand</code> already returns <code>unmatched_terms</code> for every failed
+  search, and reclassifies each ask as <code>fixable_by_search</code> or
+  <code>true_assortment_gap</code>. Run across the whole <code>chat_messages</code> log rather than
+  one ticket, that is a prioritised defect list: every word a customer used that the catalogue does
+  not know. Today it would return <em>emerald</em> (T3, still live), <em>dan</em> and
+  <em>handsome</em> (T2 — the synonym works, the literal words still do not), and <em>gym</em> and
+  <em>shorts</em> correctly separated out as a buying question, not a search one.</p>
+  <p>Customer Service and the Boss can produce that ranked list now. They cannot apply it — see
+  problem (b) in the next section — but the triage itself is exactly what this team is good at, and
+  it converts the T3 residual from an invisible recurring failure into a tracked work item.</p>
+
+  <h4>c. A storefront asset sweep before Harvard–Yale weekend</h4>
+  <p>Facilities was built, given <code>check_asset_integrity</code>, and then <strong>never consulted
+  once</strong> across all three tickets — the ticket tabs show "not consulted" on all three boards.
+  It is the only agent with no exercise at all.</p>
+  <p>Its job is the failure class nothing else can see: <code>catalogue.image_file_path</code> and
+  <code>chat_messages.products_json</code> are plain strings, not foreign keys, so SQLite will never
+  complain when they rot. A broken path is a blank tile on the storefront — the customer sees the
+  defect, the database reports nothing wrong. With the 2025 Yale vs Harvard T-shirt in the catalogue
+  and The Game being the shop's peak traffic event, a pre-weekend sweep of all 102 products is a
+  genuine operational task this team can run unchanged, on a schedule, and it currently never runs.</p>
+
+  <h3>5 · Three problems this team <em>cannot</em> solve</h3>
+
+  <h4>a. "Should we stock gym shorts, and how many?" — the question T1 actually asked</h4>
+  <p>T1 did not answer the business question. It correctly established that the question is
+  unanswerable with this data and escalated. Accounting's own words: <em>"The available data cannot
+  calculate revenue, margin, profit, payback, or whether gym shorts will sell"</em>, because
+  <code>revenue_exposure</code> reports there is no sales or order table and no unit cost. The Cash
+  tab's $0.00 is a refusal, not a decision — the shop still does not know whether to carry shorts, and
+  running this team again will produce the same escalation forever.</p>
+  <p><strong>What is needed:</strong> an <code>orders</code> / <code>order_lines</code> table with real
+  sales history and a <code>suppliers</code> table carrying unit cost, landed cost and lead time —
+  neither exists in <code>campus_customs_new.db</code>. Then MCP tools <code>sales_history</code>,
+  <code>margin_for</code> and <code>supplier_quote</code>, and a new <strong>Demand Forecasting
+  agent</strong> that can reason about seasonality — Campus Customs demand is violently seasonal
+  around move-in, The Game and graduation, and nothing in this schema records a single date of
+  anything being sold. Without that, Accounting's refusal is the correct permanent answer.</p>
+
+  <h4>b. Actually fixing the emerald gap — the residual on the T3 tab</h4>
+  <p>Customer Service diagnosed it exactly: <code>unmatched_terms=["emerald"]</code> against hoodies
+  whose colours are gray, navy and white. Everyone agrees on the fix — add a colour synonym. Nobody
+  can apply it. Of the seven MCP tools, six are read-only and the seventh,
+  <code>record_ticket_resolution</code>, writes decisions about the shop, never the shop itself.
+  There is no tool that can touch <code>catalogue.colors</code> or <code>search_tags</code>. The team
+  can diagnose this defect indefinitely and close the ticket every time without ever removing it.</p>
+  <p><strong>What is needed:</strong> a <code>propose_catalogue_edit</code> MCP tool that writes to a
+  staging table rather than live, a <code>POST /approvals/{id}/apply-edit</code> route mirroring the
+  payment route's human gate, and a <strong>Merchandising agent</strong> that owns catalogue
+  vocabulary. That agent would also own the 22 dirty <code>garment_type</code> values the harness
+  flagged — <code>t-shirt</code> vs <code>short-sleeve T-shirt</code> vs
+  <code>short-sleeve t-shirt</code> — which quietly corrupt every category rollup Inventory produces.
+  A colour <em>ontology</em> (emerald → green) plus embedding-based search would close the whole class
+  rather than one word at a time.</p>
+
+  <h4>c. Taking Tauhid's order — the sentence T2 wrote that nothing can honour</h4>
+  <p>The T2 decision instructs Customer Service to ask Tauhid to <em>"select an item and size before
+  proceeding"</em>. Proceeding to <em>what</em>? There is no cart, no order table, no payment capture,
+  no fulfilment. If Tauhid replies "the XL Vintage Bulldog crewneck", this system has nowhere to put
+  that. Worse, <code>check_stock</code> is a point-in-time read with no reservation: the team verified
+  five products and cannot hold a single unit of any of them, so two customers can be promised the
+  last XL simultaneously and both promises will have been correctly made.</p>
+  <p><strong>What is needed:</strong> <code>orders</code> and <code>reservations</code> tables with a
+  stock-decrement path, a <code>reserve_stock</code> tool with a TTL, payment capture, and a
+  <strong>Fulfilment agent</strong> owning pick/pack/ship and returns. It also needs an outbound
+  channel: Customer Service currently drafts replies into a JSON field that no customer will ever see,
+  so every "reply" the team has produced is, strictly, an unsent draft. The three tickets are closed
+  in the database and open in the customer's inbox.</p>
+
+  <div class="note">
+    <strong>One sentence.</strong> Campus Customs now has a team that is trustworthy and inert: across
+    three tickets it refused one purchase correctly, verified eight stock positions before promising
+    anything, invented nothing, moved $0.00 — and changed not one row of the shop it manages. The
+    next build should spend its effort on carefully gated write access, because every remaining
+    problem on this board is a thing the team can already see and cannot touch.
+  </div>
+</div>
+
+<footer>
+  Campus Customs · 5 agents · 7 MCP tools · <code>data/campus_customs_new.db</code> ·
+  model <code>gpt-5.6-luna</code> via Portkey
+</footer>
+
+</div>
+
+<script>
+  const tabs = document.querySelectorAll('nav button');
+  const panels = document.querySelectorAll('.panel');
+  tabs.forEach(tab => tab.addEventListener('click', () => {
+    tabs.forEach(t => t.setAttribute('aria-selected', String(t === tab)));
+    panels.forEach(p => p.classList.toggle('active', p.id === tab.dataset.t));
+  }));
+</script>
+
+</body>
+</html>

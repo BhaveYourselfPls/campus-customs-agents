@@ -1,0 +1,454 @@
+{
+  "generated_at": "2026-10-14T14:30:43+00:00",
+  "server": "campus-customs-shop",
+  "transport": "stdio (launched from .mcp.json)",
+  "database": "data/campus_customs_new.db",
+  "tools_discovered": [
+    "check_asset_integrity",
+    "check_stock",
+    "find_unmet_demand",
+    "inventory_health",
+    "record_ticket_resolution",
+    "revenue_exposure",
+    "search_products"
+  ],
+  "test_count": 6,
+  "tests": [
+    {
+      "ticket": "#2 Handsome Dan (vocabulary gap)",
+      "asked_by": "Customer Service agent",
+      "prompt": "Do you have any item with Handsome Dan on it?",
+      "tool_name": "search_products",
+      "arguments": {
+        "query": "any item with handsome dan",
+        "limit": 3
+      },
+      "tool_output": {
+        "query": "any item with handsome dan",
+        "terms_used": [
+          "bulldog",
+          "mascot",
+          "dan",
+          "item",
+          "handsome"
+        ],
+        "unmatched_terms": [
+          "dan",
+          "item",
+          "handsome"
+        ],
+        "in_stock_only": false,
+        "match_count": 3,
+        "matches": [
+          {
+            "product_id": "super-heavyweight-crewneck-arched-yale-crest",
+            "name": "Super Heavyweight Crewneck Arched Yale Crest",
+            "garment_type": "crewneck sweatshirt",
+            "price": 58.0,
+            "colors": [
+              "heather gray",
+              "navy",
+              "white"
+            ],
+            "image_file_path": "products/super-heavyweight-crewneck-arched-yale-crest.jpg",
+            "matched_terms": [
+              "bulldog",
+              "mascot"
+            ],
+            "relevance": 8,
+            "sizes_in_stock": [
+              "XS",
+              "S",
+              "M",
+              "L",
+              "XL",
+              "XXL"
+            ],
+            "sizes_sold_out": [],
+            "sizes_not_carried": [],
+            "total_units": 85
+          },
+          {
+            "product_id": "district-vit-crewneck-vintage-bulldog",
+            "name": "District Vit Crewneck Vintage Bulldog",
+            "garment_type": "crewneck sweatshirt",
+            "price": 58.0,
+            "colors": [
+              "dark heather charcoal",
+              "white"
+            ],
+            "image_file_path": "products/district-vit-crewneck-vintage-bulldog.jpg",
+            "matched_terms": [
+              "bulldog"
+            ],
+            "relevance": 5,
+            "sizes_in_stock": [
+              "XS",
+              "M",
+              "L",
+              "XL",
+              "XXL"
+            ],
+            "sizes_sold_out": [
+              "S"
+            ],
+            "sizes_not_carried": [],
+            "total_units": 93
+          },
+          {
+            "product_id": "district-vit-crewneck-vintage-standing-bulldog",
+            "name": "District Vit Crewneck Vintage Standing Bulldog",
+            "garment_type": "crewneck sweatshirt",
+            "price": 58.0,
+            "colors": [
+              "heather charcoal gray",
+              "navy blue",
+              "white"
+            ],
+            "image_file_path": "products/district-vit-crewneck-vintage-standing-bulldog.jpg",
+            "matched_terms": [
+              "bulldog"
+            ],
+            "relevance": 5,
+            "sizes_in_stock": [
+              "XS",
+              "M",
+              "L",
+              "XL"
+            ],
+            "sizes_sold_out": [
+              "S",
+              "XXL"
+            ],
+            "sizes_not_carried": [],
+            "total_units": 45
+          }
+        ]
+      }
+    },
+    {
+      "ticket": "#3 emerald green hoodie (color gap)",
+      "asked_by": "Customer Service agent",
+      "prompt": "Do you have a bright emerald green hoodie, and can we actually ship one?",
+      "tool_name": "search_products",
+      "arguments": {
+        "query": "bright emerald green hoodie",
+        "in_stock_only": true,
+        "limit": 3
+      },
+      "tool_output": {
+        "query": "bright emerald green hoodie",
+        "terms_used": [
+          "emerald",
+          "green",
+          "hoodie"
+        ],
+        "unmatched_terms": [
+          "emerald"
+        ],
+        "in_stock_only": true,
+        "match_count": 3,
+        "matches": [
+          {
+            "product_id": "yale-sports-hoodie-tennis",
+            "name": "Yale Sports Hoodie Tennis",
+            "garment_type": "hooded sweatshirt",
+            "price": 45.0,
+            "colors": [
+              "heather gray",
+              "navy blue"
+            ],
+            "image_file_path": "products/yale-sports-hoodie-tennis.jpg",
+            "matched_terms": [
+              "hoodie"
+            ],
+            "relevance": 5,
+            "sizes_in_stock": [
+              "XS",
+              "S",
+              "M",
+              "L",
+              "XL",
+              "XXL"
+            ],
+            "sizes_sold_out": [],
+            "sizes_not_carried": [],
+            "total_units": 67
+          },
+          {
+            "product_id": "basic-hoodie-big-yale",
+            "name": "Basic Hoodie Big Yale",
+            "garment_type": "pullover hoodie",
+            "price": 68.0,
+            "colors": [
+              "navy blue",
+              "white"
+            ],
+            "image_file_path": "products/basic-hoodie-big-yale.jpg",
+            "matched_terms": [
+              "hoodie"
+            ],
+            "relevance": 5,
+            "sizes_in_stock": [
+              "XS",
+              "S",
+              "M",
+              "L",
+              "XL",
+              "XXL"
+            ],
+            "sizes_sold_out": [],
+            "sizes_not_carried": [],
+            "total_units": 60
+          },
+          {
+            "product_id": "champion-reverse-weave-hoodie-1",
+            "name": "Champion Reverse Weave Hoodie 1",
+            "garment_type": "hoodie",
+            "price": 68.0,
+            "colors": [
+              "navy",
+              "white"
+            ],
+            "image_file_path": "products/champion-reverse-weave-hoodie-1.jpg",
+            "matched_terms": [
+              "hoodie"
+            ],
+            "relevance": 5,
+            "sizes_in_stock": [
+              "S",
+              "M",
+              "L",
+              "XXL"
+            ],
+            "sizes_sold_out": [
+              "XS",
+              "XL"
+            ],
+            "sizes_not_carried": [],
+            "total_units": 80
+          }
+        ]
+      }
+    },
+    {
+      "ticket": "#1 gym shorts (assortment gap)",
+      "asked_by": "Inventory agent",
+      "prompt": "A customer asked for gym shorts. Do we carry anything that matches?",
+      "tool_name": "search_products",
+      "arguments": {
+        "query": "im looking for gym shorts",
+        "limit": 5
+      },
+      "tool_output": {
+        "query": "im looking for gym shorts",
+        "terms_used": [
+          "gym",
+          "shorts"
+        ],
+        "unmatched_terms": [
+          "gym",
+          "shorts"
+        ],
+        "in_stock_only": false,
+        "match_count": 0,
+        "matches": []
+      }
+    },
+    {
+      "ticket": "#3 promise gate",
+      "asked_by": "Customer Service agent",
+      "prompt": "Before I promise it \u2014 is the Basic Hoodie Big Yale available in size L?",
+      "tool_name": "check_stock",
+      "arguments": {
+        "product_id": "basic-hoodie-big-yale",
+        "size": "L"
+      },
+      "tool_output": {
+        "product_id": "basic-hoodie-big-yale",
+        "found": true,
+        "name": "Basic Hoodie Big Yale",
+        "garment_type": "pullover hoodie",
+        "price": 68.0,
+        "colors": [
+          "navy blue",
+          "white"
+        ],
+        "image_file_path": "products/basic-hoodie-big-yale.jpg",
+        "sizes_in_stock": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "XXL"
+        ],
+        "sizes_sold_out": [],
+        "sizes_not_carried": [],
+        "total_units": 60,
+        "size": "L",
+        "quantity": 8,
+        "can_promise": true,
+        "status": "in_stock",
+        "low_stock": false
+      }
+    },
+    {
+      "ticket": "promise gate, negative case",
+      "asked_by": "Inventory agent",
+      "prompt": "Can we still sell the Baseball Left Chest Crewneck in XS?",
+      "tool_name": "check_stock",
+      "arguments": {
+        "product_id": "baseball-left-chest-crewneck",
+        "size": "XS"
+      },
+      "tool_output": {
+        "product_id": "baseball-left-chest-crewneck",
+        "found": true,
+        "name": "Baseball Left Chest Crewneck",
+        "garment_type": "crewneck sweatshirt",
+        "price": 58.0,
+        "colors": [
+          "navy",
+          "white"
+        ],
+        "image_file_path": "products/baseball-left-chest-crewneck.jpg",
+        "sizes_in_stock": [
+          "S",
+          "M",
+          "L",
+          "XXL"
+        ],
+        "sizes_sold_out": [
+          "XS",
+          "XL"
+        ],
+        "sizes_not_carried": [],
+        "total_units": 70,
+        "size": "XS",
+        "quantity": 0,
+        "can_promise": false,
+        "status": "sold_out",
+        "low_stock": false
+      }
+    },
+    {
+      "ticket": "all open tickets",
+      "asked_by": "Boss agent",
+      "prompt": "What tickets are still open, and whose problem is each one?",
+      "tool_name": "find_unmet_demand",
+      "arguments": {},
+      "tool_output": {
+        "open_ticket_count": 3,
+        "by_classification": {
+          "true_assortment_gap": 1,
+          "fixable_by_search": 2
+        },
+        "tickets": [
+          {
+            "times_asked": 1,
+            "restatements": [],
+            "message_id": 10,
+            "user_id": 3,
+            "user_name": "Tauhid Zaman",
+            "user_email": "tauhid.zaman@yale.edu",
+            "asked_at": "2026-09-19 11:58:19",
+            "customer_asked": "im looking for gym shorts",
+            "shop_replied": "Tauhid, I couldn\u2019t find any products matching \u201cgym shorts\u201d right now. Would you like me to look for athletic shorts, running shorts, or Yale shorts instead?",
+            "classification": "true_assortment_gap",
+            "terms_tried": [
+              "gym",
+              "shorts"
+            ],
+            "unmatched_terms": [
+              "gym",
+              "shorts"
+            ],
+            "would_now_find": [],
+            "owner": "Inventory"
+          },
+          {
+            "times_asked": 2,
+            "restatements": [
+              "well any item iwth handsome dan"
+            ],
+            "message_id": 12,
+            "user_id": 3,
+            "user_name": "Tauhid Zaman",
+            "user_email": "tauhid.zaman@yale.edu",
+            "asked_at": "2026-09-19 11:58:37",
+            "customer_asked": "how about something with handsome dan on it",
+            "shop_replied": "Tauhid, I couldn\u2019t find any gym shorts featuring Handsome Dan in the current collection. I also didn\u2019t find a Handsome Dan item specifically. I can show you Yale athletic shorts or other Handsome Dan-",
+            "classification": "fixable_by_search",
+            "terms_tried": [
+              "bulldog",
+              "mascot",
+              "dan",
+              "handsome"
+            ],
+            "unmatched_terms": [
+              "dan",
+              "handsome"
+            ],
+            "would_now_find": [
+              {
+                "product_id": "super-heavyweight-crewneck-arched-yale-crest",
+                "name": "Super Heavyweight Crewneck Arched Yale Crest",
+                "price": 58.0
+              },
+              {
+                "product_id": "district-vit-crewneck-vintage-bulldog",
+                "name": "District Vit Crewneck Vintage Bulldog",
+                "price": 58.0
+              },
+              {
+                "product_id": "district-vit-crewneck-vintage-standing-bulldog",
+                "name": "District Vit Crewneck Vintage Standing Bulldog",
+                "price": 58.0
+              }
+            ],
+            "owner": "Customer Service"
+          },
+          {
+            "times_asked": 1,
+            "restatements": [],
+            "message_id": 52,
+            "user_id": 1,
+            "user_name": "Test User",
+            "user_email": "test@campuscustoms.yale.edu",
+            "asked_at": "2026-10-08 01:43:53",
+            "customer_asked": "Do you have a bright emerald green hoodie?",
+            "shop_replied": "Hi Test, I couldn\u2019t pull up hoodie matches for bright emerald green just now. Want me to try another shade or show you our hoodies?",
+            "classification": "fixable_by_search",
+            "terms_tried": [
+              "emerald",
+              "green",
+              "hoodie"
+            ],
+            "unmatched_terms": [
+              "emerald"
+            ],
+            "would_now_find": [
+              {
+                "product_id": "yale-sports-hoodie-tennis",
+                "name": "Yale Sports Hoodie Tennis",
+                "price": 45.0
+              },
+              {
+                "product_id": "basic-hoodie-big-yale",
+                "name": "Basic Hoodie Big Yale",
+                "price": 68.0
+              },
+              {
+                "product_id": "champion-reverse-weave-hoodie-1",
+                "name": "Champion Reverse Weave Hoodie 1",
+                "price": 68.0
+              }
+            ],
+            "owner": "Customer Service"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,308 @@
+{
+  "generated_at": "2026-10-13T19:55:41+00:00",
+  "database": "data/campus_customs_new.db",
+  "model": "gpt-5.6-luna",
+  "reset_before_runs": true,
+  "ticket_count": 3,
+  "all_resolved": true,
+  "cash": {
+    "opening_balance": 25000.0,
+    "total_debits": 0,
+    "computed_closing_balance": 25000.0,
+    "cash_accounts_balance": 25000.0,
+    "reconciled": true,
+    "transaction_count": 0
+  },
+  "tickets": [
+    {
+      "ticket_id": "T1-gym-shorts",
+      "final_status": "Resolved",
+      "outcome": "No purchase. Confirmed as a true assortment gap \u2014 the shop carries no shorts at all \u2014 but with only one recorded request and no unit cost or sales history, the team declined to commit spend and escalated the buying decision to a human.",
+      "classification": "true_assortment_gap",
+      "owner": "Boss",
+      "run_id": "run-20261013T195012Z-c02be0",
+      "model": "gpt-5.6-luna",
+      "audit_steps": 14,
+      "delegations": [
+        "Inventory",
+        "Accounting"
+      ],
+      "agents_not_consulted": [
+        "Facilities",
+        "CustomerService"
+      ],
+      "tool_calls": {
+        "find_unmet_demand": 1,
+        "search_products": 2,
+        "revenue_exposure": 1,
+        "inventory_health": 1
+      },
+      "agent_contributions": [
+        {
+          "agent": "Boss",
+          "role": "decided",
+          "contribution": "Do not add or order gym shorts yet. Hold the request while obtaining supplier unit cost and additional demand evidence; a limited pilot can be reconsidered after human review.",
+          "rationale": "Inventory confirmed no gym-shorts products are available and found only one request, which is insufficient demand evidence to justify buying. Accounting confirmed that unit cost, comparable pricing, and sales/order history are unavailable, so the economics cannot be established. I am following both specialists\u2019 recommendation not to approve a purchase on current evidence.",
+          "tools_used": [],
+          "confidence": null,
+          "escalated": true
+        },
+        {
+          "agent": "Inventory",
+          "role": "advised",
+          "contribution": "Gym shorts are a confirmed assortment gap, not a temporary stockout: today\u2019s in-stock search returned zero matching products, and unmet-demand analysis records one customer request. The evidence supports evaluating the category, but does not establish enough demand for Inventory to decide that Campus Customs should buy it.",
+          "recommendation": "Escalate to the Boss for a human buying decision: consider a small gym-shorts test assortment or gather additional demand before committing spend; Inventory should not place the order.",
+          "tools_used": [
+            "find_unmet_demand",
+            "search_products"
+          ],
+          "confidence": "high",
+          "escalated": true,
+          "escalation_reason": "Adding gym shorts is a new product-line and purchasing decision beyond Inventory\u2019s authority; current evidence is limited to one request.",
+          "findings": [
+            {
+              "statement": "Ticket T1-gym-shorts is classified as a true assortment gap after today\u2019s search found no matching product.",
+              "evidence": "find_unmet_demand: ticket customer_asked \u201cim looking for gym shorts\u201d; classification \u201ctrue_assortment_gap\u201d; terms_tried [\u201cgym\u201d, \u201cshorts\u201d]; would_now_find []; times_asked: 1."
+            },
+            {
+              "statement": "There are currently no sellable gym-shorts matches in the catalogue.",
+              "evidence": "search_products(query=\"gym shorts\", in_stock_only=true): match_count 0; unmatched_terms [\u201cgym\u201d, \u201cshorts\u201d]."
+            },
+            {
+              "statement": "The available evidence is one recorded customer request, so it demonstrates unmet interest but not sufficient demand to justify a purchase by itself.",
+              "evidence": "find_unmet_demand: T1-gym-shorts times_asked: 1."
+            }
+          ]
+        },
+        {
+          "agent": "Accounting",
+          "role": "advised",
+          "contribution": "The evidence does not support the economics of adding gym shorts: the catalogue search returned no gym-shorts matches, so there is no comparable price band, and the database contains no sales or order history. I recommend not approving a purchase on current evidence; any pilot would require a human decision after obtaining unit cost and demand evidence.",
+          "recommendation": "Do not authorize adding the line based on this evidence. If management wants to explore it, obtain supplier unit cost and a demand signal, then have a human approve a limited pilot; the purchase decision exceeds Accounting's authority.",
+          "tools_used": [
+            "revenue_exposure",
+            "search_products",
+            "inventory_health"
+          ],
+          "confidence": "high",
+          "escalated": true,
+          "escalation_reason": "Adding a new product line commits money, and the database lacks the sales/order history and unit cost required to evaluate expected economics.",
+          "findings": [
+            {
+              "statement": "No gym-shorts product or comparable was found in the current catalogue search.",
+              "evidence": "search_products(query=\"gym shorts\") returned match_count 0, with unmatched_terms [\"gym\", \"shorts\"]."
+            },
+            {
+              "statement": "The retail value of stock on hand is $344,168 across 5,920 units; this is a shelf valuation, not revenue.",
+              "evidence": "revenue_exposure reported stock_at_retail $344,168.00 and total_units_on_hand 5,920, with basis \"catalogue retail price; no sales/order table exists in this database.\""
+            },
+            {
+              "statement": "Inventory currently has 145 sold-out product-size rows (23.7%) and 115 low-stock rows, but this does not establish demand for gym shorts.",
+              "evidence": "inventory_health reported sold_out_rows 145, sold_out_pct 23.7, and low_stock_rows 115; no gym-shorts demand or sales measure is available."
+            },
+            {
+              "statement": "The available data cannot calculate revenue, margin, profit, payback, or whether gym shorts will sell.",
+              "evidence": "revenue_exposure explicitly states there is no sales/order table; no unit cost is present in the tool output."
+            }
+          ]
+        }
+      ],
+      "human_approvals": {
+        "required": true,
+        "granted": false,
+        "transactions": [],
+        "note": "Boss flagged needs_human_approval=True; no human released funds, because the team's own recommendation was not to buy on current evidence."
+      },
+      "cash_impact_usd": 0,
+      "escalations": [
+        "Inventory: Adding gym shorts is a new product-line and purchasing decision beyond Inventory\u2019s authority; current evidence is limited to one request.",
+        "Accounting: Adding a new product line commits money, and the database lacks the sales/order history and unit cost required to evaluate expected economics.",
+        "Boss: T1-gym-shorts needs human approval"
+      ],
+      "recorded_resolution": {
+        "resolution_id": 1,
+        "ticket_ref": "T1-gym-shorts",
+        "decision": "Do not place an order or add gym shorts to the catalogue yet. Hold the request pending a human buying decision after obtaining supplier unit cost and additional demand evidence; a limited pilot may then be considered.",
+        "rationale": "Inventory confirmed this is a genuine assortment gap but found only one request and insufficient demand evidence to justify buying. Accounting found no comparable price band, unit cost, or sales/order history, so economics cannot be established and recommends no approval on current evidence. Because adding a product line commits spend and changes what customers can buy, human approval is required.",
+        "decided_by": "Boss",
+        "owner": "Boss",
+        "product_ids": "[]",
+        "recorded_at": "2026-10-13 19:50:47"
+      }
+    },
+    {
+      "ticket_id": "T2-handsome-dan",
+      "final_status": "Resolved",
+      "outcome": "Resolved by search, no spend. The mascot was indexed as 'bulldog', never 'Handsome Dan'. Five in-stock mascot products were verified and a corrected reply drafted for Tauhid.",
+      "classification": "fixable_by_search",
+      "owner": "CustomerService",
+      "run_id": "run-20261013T195051Z-ebc4b9",
+      "model": "gpt-5.6-luna",
+      "audit_steps": 12,
+      "delegations": [
+        "CustomerService"
+      ],
+      "agents_not_consulted": [
+        "Inventory",
+        "Accounting",
+        "Facilities"
+      ],
+      "tool_calls": {
+        "find_unmet_demand": 1,
+        "search_products": 1,
+        "check_stock": 5
+      },
+      "agent_contributions": [
+        {
+          "agent": "Boss",
+          "role": "decided",
+          "contribution": "CustomerService will correct the earlier failed search response and offer Tauhid the confirmed-available Handsome Dan/bulldog items, asking him to select an item and size before proceeding. The items must not be described as gym shorts.",
+          "rationale": "CustomerService\u2019s high-confidence search and stock-check findings confirm five available bulldog/m mascot products. This is a search-vocabulary issue, not a buying decision; the earlier response should be corrected.",
+          "tools_used": [],
+          "confidence": null,
+          "escalated": false
+        },
+        {
+          "agent": "CustomerService",
+          "role": "advised",
+          "contribution": "Search now finds five in-stock mascot/bulldog products for Tauhid, and stock checks confirm each can be promised in listed sizes. Recommend correcting the earlier search result and offering the strongest bulldog matches without implying that gym shorts are available.",
+          "recommendation": "Draft for human review: \u201cTauhid, I found several Handsome Dan/bulldog items. The District Vit Crewneck Vintage Bulldog is $58 in XS, M, L, XL, and XXL, and the Vintage Standing Bulldog crewneck is $58 in XS, M, L, and XL; we also have Vintage Bulldog hoodies for $68 in XS\u2013XL. Reply with the item and size you want, and we\u2019ll check the next step.\u201d Do not describe these as gym shorts or promise a hold/order; the earlier gym-shorts request remains a true assortment gap.",
+          "tools_used": [
+            "find_unmet_demand",
+            "search_products",
+            "check_stock",
+            "check_stock",
+            "check_stock",
+            "check_stock",
+            "check_stock"
+          ],
+          "confidence": "high",
+          "escalated": false,
+          "escalation_reason": null,
+          "findings": [
+            {
+              "statement": "District Vit Crewneck Vintage Bulldog is available at $58 in sizes XS, M, L, XL, and XXL; S is sold out.",
+              "evidence": "check_stock product_id district-vit-crewneck-vintage-bulldog: can_promise=true, price=58.0, sizes_in_stock=[XS,M,L,XL,XXL], sizes_sold_out=[S]."
+            },
+            {
+              "statement": "District Vit Crewneck Vintage Standing Bulldog is available at $58 in sizes XS, M, L, and XL; S and XXL are sold out.",
+              "evidence": "check_stock product_id district-vit-crewneck-vintage-standing-bulldog: can_promise=true, price=58.0, sizes_in_stock=[XS,M,L,XL], sizes_sold_out=[S,XXL]."
+            },
+            {
+              "statement": "Bulldog hoodies are also available: Vintage Bulldog at $68 in XS, S, M, L, XL, and Vintage Sailor Bulldog at $68 in XS, S, M, XL, XXL.",
+              "evidence": "check_stock results: district-vit-hoodie-vintage-bulldog can_promise=true, sizes_in_stock=[XS,S,M,L,XL]; district-vit-hoodie-vintage-sailor-bulldog can_promise=true, sizes_in_stock=[XS,S,M,XL,XXL]."
+            },
+            {
+              "statement": "The search vocabulary maps Handsome Dan to bulldog/mascot, but the literal terms \u201cdan\u201d and \u201chandsome\u201d remain unmatched.",
+              "evidence": "search_products query \u201cHandsome Dan bulldog\u201d: terms_used=[bulldog,mascot,dan,handsome], unmatched_terms=[dan,handsome], match_count=5."
+            }
+          ]
+        }
+      ],
+      "human_approvals": {
+        "required": false,
+        "granted": false,
+        "transactions": [],
+        "note": "No spend was proposed; this ticket was resolved by correcting search, not buying."
+      },
+      "cash_impact_usd": 0,
+      "escalations": [],
+      "recorded_resolution": {
+        "resolution_id": 2,
+        "ticket_ref": "T2-handsome-dan",
+        "decision": "Correct the earlier failed search response and have CustomerService offer Tauhid the confirmed-available Handsome Dan/bulldog items: the Vintage Bulldog and Vintage Standing Bulldog crewnecks, plus the identified bulldog hoodies. Ask him to select an item and size before proceeding; do not represent any of these as gym shorts.",
+        "rationale": "CustomerService found and confirmed stock for five bulldog/m mascot products, so this is fixable by search rather than an assortment gap. The customer-facing correction is based on high-confidence findings with check_stock evidence; no purchase or new product decision is required.",
+        "decided_by": "Boss",
+        "owner": "CustomerService",
+        "product_ids": "[\"district-vit-crewneck-vintage-bulldog\", \"district-vit-crewneck-vintage-standing-bulldog\", \"district-vit-hoodie-vintage-bulldog\", \"district-vit-hoodie-vintage-sailor-bulldog\"]",
+        "recorded_at": "2026-10-13 19:50:55"
+      }
+    },
+    {
+      "ticket_id": "T3-emerald-green-hoodie",
+      "final_status": "Resolved",
+      "outcome": "Resolved by search, no spend. Hoodies exist but no emerald-green colourway does. Three verified in-stock hoodies offered as alternatives, with the colour gap stated plainly.",
+      "classification": "fixable_by_search",
+      "owner": "CustomerService",
+      "run_id": "run-20261013T195059Z-aaf53f",
+      "model": "gpt-5.6-luna",
+      "audit_steps": 10,
+      "delegations": [
+        "CustomerService"
+      ],
+      "agents_not_consulted": [
+        "Inventory",
+        "Accounting",
+        "Facilities"
+      ],
+      "tool_calls": {
+        "find_unmet_demand": 1,
+        "search_products": 1,
+        "check_stock": 3
+      },
+      "agent_contributions": [
+        {
+          "agent": "Boss",
+          "role": "decided",
+          "contribution": "Customer Service will tell Test User that no bright emerald-green hoodie is available, then offer the verified closest alternatives: Yale Sports Hoodie Tennis ($45, XS\u2013XXL), Basic Hoodie Big Yale ($68, XS\u2013XXL), or Champion Reverse Weave Hoodie 1 ($68, S/M/L/XXL).",
+          "rationale": "Customer Service found that \u201cemerald\u201d was unmatched and the available hoodie colors are gray, navy, and white. Its authoritative stock checks verified the listed products and sizes, so alternatives may be offered without a purchase or catalogue change.",
+          "tools_used": [],
+          "confidence": null,
+          "escalated": false
+        },
+        {
+          "agent": "CustomerService",
+          "role": "advised",
+          "contribution": "The catalogue has no bright emerald-green hoodie match: \u201cemerald\u201d remained unmatched, and the returned hoodies are gray, navy, or white. Three nearest hoodie options are safely offerable after authoritative stock checks, with all listed available sizes verified.",
+          "recommendation": "Draft to Test: \u201cHi Test, I couldn\u2019t find a bright emerald-green hoodie\u2014the closest hoodie matches we have are in gray, navy, and white. We can offer the Yale Sports Hoodie Tennis for $45 in XS\u2013XXL, the Basic Hoodie Big Yale for $68 in XS\u2013XXL, or the Champion Reverse Weave Hoodie 1 for $68 in S, M, L, or XXL. Please reply with your preferred style and size, and I\u2019ll point you to the right option.\u201d",
+          "tools_used": [
+            "find_unmet_demand",
+            "search_products",
+            "check_stock",
+            "check_stock",
+            "check_stock"
+          ],
+          "confidence": "high",
+          "escalated": false,
+          "escalation_reason": null,
+          "findings": [
+            {
+              "statement": "The search did not find a bright emerald-green hoodie; \u201cemerald\u201d was unmatched and the hoodie results had only gray, navy, or white colorways.",
+              "evidence": "search_products for \u201cbright emerald green hoodie\u201d: unmatched_terms=[\"emerald\"]; returned colors include heather gray/navy blue, navy blue/white, and navy/white."
+            },
+            {
+              "statement": "Yale Sports Hoodie Tennis can be offered for $45 in sizes XS, S, M, L, XL, and XXL.",
+              "evidence": "check_stock product_id=yale-sports-hoodie-tennis: can_promise=true, price=45.0, sizes_in_stock=[\"XS\",\"S\",\"M\",\"L\",\"XL\",\"XXL\"]."
+            },
+            {
+              "statement": "Basic Hoodie Big Yale can be offered for $68 in sizes XS, S, M, L, XL, and XXL.",
+              "evidence": "check_stock product_id=basic-hoodie-big-yale: can_promise=true, price=68.0, sizes_in_stock=[\"XS\",\"S\",\"M\",\"L\",\"XL\",\"XXL\"]."
+            },
+            {
+              "statement": "Champion Reverse Weave Hoodie 1 can be offered for $68 in sizes S, M, L, and XXL; XS and XL are sold out.",
+              "evidence": "check_stock product_id=champion-reverse-weave-hoodie-1: can_promise=true, price=68.0, sizes_in_stock=[\"S\",\"M\",\"L\",\"XXL\"], sizes_sold_out=[\"XS\",\"XL\"]."
+            }
+          ]
+        }
+      ],
+      "human_approvals": {
+        "required": false,
+        "granted": false,
+        "transactions": [],
+        "note": "No spend was proposed; this ticket was resolved by correcting search, not buying."
+      },
+      "cash_impact_usd": 0,
+      "escalations": [],
+      "recorded_resolution": {
+        "resolution_id": 3,
+        "ticket_ref": "T3-emerald-green-hoodie",
+        "decision": "Tell Test User that no bright emerald-green hoodie was found, and offer the verified closest alternatives: Yale Sports Hoodie Tennis ($45, XS\u2013XXL), Basic Hoodie Big Yale ($68, XS\u2013XXL), or Champion Reverse Weave Hoodie 1 ($68, S/M/L/XXL only). Ask for preferred style and size.",
+        "rationale": "Customer Service found the issue was a search-vocabulary failure: \u201cemerald\u201d was unmatched, while available hoodie colorways are gray, navy, and white. Customer Service also cited authoritative stock checks confirming the listed sizes can be promised. No buying action is needed.",
+        "decided_by": "Boss",
+        "owner": "CustomerService",
+        "product_ids": "[\"yale-sports-hoodie-tennis\", \"basic-hoodie-big-yale\", \"champion-reverse-weave-hoodie-1\"]",
+        "recorded_at": "2026-10-13 19:51:23"
+      }
+    }
+  ]
+}
